@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿#pragma warning disable CS8629
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SessionWorkshop.Models;
 
@@ -17,6 +18,12 @@ public class HomeController : Controller
     [HttpPost("login")]
     public IActionResult Login(User newUser)
     {
+        //! Form Error Validations
+        if(!ModelState.IsValid)
+        {
+            return View("Index");
+        }
+
         //! Set Session User and Number; Redirect to Dashboard
         HttpContext.Session.SetString("User", newUser.Name);
         HttpContext.Session.SetInt32("Number", 22);
