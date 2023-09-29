@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using SessionWorkshop.Models;
 
@@ -7,31 +6,28 @@ namespace SessionWorkshop.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
+    //* Index View
     [HttpGet("")]
     public IActionResult Index()
     {
         return View();
     }
 
+    //* Login/Set Session Action
     [HttpPost("login")]
     public IActionResult Login(string name)
     {
+        //! Set Session User and Number; Redirect to Dashboard
         HttpContext.Session.SetString("User", name);
         HttpContext.Session.SetInt32("Number", 22);
         return RedirectToAction("Dashboard");
     }
 
+    //* Dashboard View
     [HttpGet("dashboard")]
     public IActionResult Dashboard()
     {
-        
+        //! Check if user signed in
         if(HttpContext.Session.GetString("User") == null){
             return RedirectToAction("Index");
         }
@@ -39,39 +35,45 @@ public class HomeController : Controller
         return View();
     }
 
+    //* Update Session Int
     [HttpPost("math")]
     public IActionResult Math(string math)
     {
+        //! Get current Session Int and cast as int
         int? Number = HttpContext.Session.GetInt32("Number");
         int NewNumber = (int)Number;
+
+        //! Perform Math Function
         switch(math){
             case "add":
                 NewNumber += 1;
-                HttpContext.Session.SetInt32("Number", NewNumber);
                 break;
             case "subtract":
                 NewNumber -= 1;
-                HttpContext.Session.SetInt32("Number", NewNumber);
                 break;
             case "multiply":
                 NewNumber *= 2;
-                HttpContext.Session.SetInt32("Number", NewNumber);
                 break;
             case "random":
                 Random rand = new();
                 int RandomNumber = rand.Next(1,11);
                 NewNumber += RandomNumber;
-                HttpContext.Session.SetInt32("Number", NewNumber);
                 break;
             default:
                 break;
         }
+
+        //! Set new Session Int & Redirect to Dashboard
+        HttpContext.Session.SetInt32("Number", NewNumber);
         return RedirectToAction("Dashboard");
     }
 
+
+    //* Logout/Clear Session Action
     [HttpPost("logout")]
     public RedirectToActionResult Logout()
     {
+        //! Clear All Session
         HttpContext.Session.Clear();
         return RedirectToAction("Index");
     }
