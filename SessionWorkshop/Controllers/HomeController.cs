@@ -15,10 +15,10 @@ public class HomeController : Controller
 
     //* Login/Set Session Action
     [HttpPost("login")]
-    public IActionResult Login(string name)
+    public IActionResult Login(User newUser)
     {
         //! Set Session User and Number; Redirect to Dashboard
-        HttpContext.Session.SetString("User", name);
+        HttpContext.Session.SetString("User", newUser.Name);
         HttpContext.Session.SetInt32("Number", 22);
         return RedirectToAction("Dashboard");
     }
